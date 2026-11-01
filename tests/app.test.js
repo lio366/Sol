@@ -1,0 +1,593 @@
+const translations = {
+  es: {
+    brand: 'ADPULSE',
+    navPricing: 'Precios',
+    navFaq: 'FAQ',
+    navSupport: 'Soporte',
+    navLogin: 'Entrar',
+    navStart: 'Comenzar prueba',
+    heroEyebrow: 'AUTOMÁTICA BUSINESS OS',
+    heroTitle: 'Automatiza tu empresa con IA guiada, segura y medible.',
+    heroText: 'Conectamos procesos, permisos, herramientas y agentes para que las empresas operen más rápido sin perder control.',
+    tryNow: 'Probar 15 días',
+    discover: 'Ver demo',
+    metricsLeads: 'Leads gestionados',
+    metricsSaved: 'Tiempo ahorrado',
+    metricsApproval: 'Aprobaciones humanas',
+    featuresTitle: 'Diseñado para ejecutar con control',
+    feature1Title: 'Diagnóstico del negocio',
+    feature1Text: 'Mapeamos procesos y sugerimos automatizaciones con impacto real.',
+    feature2Title: 'Permisos y aprobación',
+    feature2Text: 'Cada acción pasa por gobernanza, riesgo y validación humana según corresponda.',
+    feature3Title: 'Facturación transparente',
+    feature3Text: 'Suscripción, consumo, costes de IA y servicios diferenciados sin sorpresas.',
+    feature4Title: 'Panel multi-tenant',
+    feature4Text: 'Cada empresa opera en su propio contexto, con aislamiento y trazabilidad.',
+    pricingTitle: 'Planes para crecer sin perder margen',
+    pricingSubtitle: 'Empieza con un piloto y escala con trazabilidad y consumo visible.',
+    faqTitle: 'Preguntas frecuentes',
+    contactTitle: 'Hablemos de tu operación',
+    registerTitle: 'Crear cuenta',
+    signInTitle: 'Iniciar sesión',
+    dashboardTitle: 'Panel de negocio',
+    adminTitle: 'Administración interna',
+    businessSetup: 'Configuración del negocio',
+    startTrial: 'Activar prueba',
+    acceptTrial: 'Aceptar prueba',
+    language: 'Idioma',
+    legalTitle: 'Legal',
+    privacyTitle: 'Privacidad',
+    termsTitle: 'Términos',
+    welcomeBack: 'Bienvenido de nuevo',
+    tenantEmpty: 'Todavía no has creado empresas.',
+    noCompany: 'Sin empresa activa.',
+    trialActive: 'Prueba activa',
+    success: 'Éxito',
+    error: 'Error'
+  },
+  en: {
+    brand: 'ADPULSE',
+    navPricing: 'Pricing',
+    navFaq: 'FAQ',
+    navSupport: 'Support',
+    navLogin: 'Log in',
+    navStart: 'Start trial',
+    heroEyebrow: 'AUTOMÁTICA BUSINESS OS',
+    heroTitle: 'Automate your company with guided, secure and measurable AI.',
+    heroText: 'We connect processes, permissions and tools so your organization moves faster without losing control.',
+    tryNow: 'Try 15 days',
+    discover: 'See demo',
+    metricsLeads: 'Leads managed',
+    metricsSaved: 'Time saved',
+    metricsApproval: 'Human approvals',
+    featuresTitle: 'Built to execute with control',
+    feature1Title: 'Business diagnosis',
+    feature1Text: 'We map operations and recommend automations with measurable value.',
+    feature2Title: 'Permissions and approval',
+    feature2Text: 'Each action follows governance, risk and human validation as required.',
+    feature3Title: 'Transparent billing',
+    feature3Text: 'Subscription, AI consumption and services shown separately with no hidden costs.',
+    feature4Title: 'Multi-tenant control',
+    feature4Text: 'Each company works in its own isolated context with auditability and governance.',
+    pricingTitle: 'Plans built for growth without margin erosion',
+    pricingSubtitle: 'Start with a pilot and scale with visibility, guardrails and usage control.',
+    faqTitle: 'Frequently asked questions',
+    contactTitle: 'Let’s talk about your operation',
+    registerTitle: 'Create account',
+    signInTitle: 'Sign in',
+    dashboardTitle: 'Business dashboard',
+    adminTitle: 'Internal administration',
+    businessSetup: 'Business setup',
+    startTrial: 'Activate trial',
+    acceptTrial: 'Accept trial',
+    language: 'Language',
+    legalTitle: 'Legal',
+    privacyTitle: 'Privacy',
+    termsTitle: 'Terms',
+    welcomeBack: 'Welcome back',
+    tenantEmpty: 'You have not created any businesses yet.',
+    noCompany: 'No active company selected.',
+    trialActive: 'Trial active',
+    success: 'Success',
+    error: 'Error'
+  }
+};
+
+const state = {
+  language: localStorage.getItem('adpulse-lang') || 'es',
+  token: localStorage.getItem('adpulse-token') || '',
+  user: null,
+  tenants: [],
+  dashboard: null,
+  adminStats: null,
+  config: null
+};
+
+const appRoot = document.getElementById('app');
+
+function t(key) {
+  return translations[state.language]?.[key] || translations.es[key] || key;
+}
+
+async function api(path, options = {}) {
+  const headers = { ...(options.headers || {}) };
+  if (!(options.body instanceof FormData)) {
+    headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+  }
+  if (state.token) headers.Authorization = `Bearer ${state.token}`;
+
+  const response = await fetch(path, { ...options, headers });
+  const contentType = response.headers.get('content-type') || '';
+  const payload = contentType.includes('application/json') ? await response.json() : await response.text();
+  if (!response.ok) {
+    throw new Error(typeof payload === 'string' ? payload : payload.message || 'Request failed');
+  }
+  return payload;
+}
+
+async function loadConfig() {
+  state.config = await api('/api/config');
+}
+
+async function refreshSession() {
+  if (!state.token) {
+    state.user = null;
+    state.tenants = [];
+    state.dashboard = null;
+    return;
+  }
+
+  try {
+    const data = await api('/api/me');
+    state.user = data.user;
+    state.tenants = data.tenants || [];
+    if (state.tenants.length) {
+      state.dashboard = await api(`/api/dashboard?tenantId=${state.tenants[0].id}`);
+    }
+  } catch {
+    state.token = '';
+    localStorage.removeItem('adpulse-token');
+    state.user = null;
+    state.tenants = [];
+    state.dashboard = null;
+  }
+}
+
+async function loadAdminStats() {
+  try {
+    state.adminStats = await api('/api/admin/stats');
+  } catch {
+    state.adminStats = null;
+  }
+}
+
+function renderHeader() {
+  return `
+    <header class="topbar">
+      <div class="container nav-shell">
+        <div class="brand-group">
+          <div class="brand-mark">A</div>
+          <span>${t('brand')}</span>
+        </div>
+        <nav class="nav">
+          <a href="#pricing">${t('navPricing')}</a>
+          <a href="#faq">${t('navFaq')}</a>
+          <a href="#contact">${t('navSupport')}</a>
+          ${state.user ? '<a href="#dashboard">Dashboard</a>' : `<a href="#signin">${t('navLogin')}</a>`}
+        </nav>
+        <div class="nav-actions">
+          <select id="langSelector" aria-label="${t('language')}">
+            <option value="es" ${state.language === 'es' ? 'selected' : ''}>ES</option>
+            <option value="en" ${state.language === 'en' ? 'selected' : ''}>EN</option>
+          </select>
+          <button class="primary-btn" data-route="#signup">${t('navStart')}</button>
+        </div>
+      </div>
+    </header>
+  `;
+}
+
+function renderLanding() {
+  const plans = state.config?.plans || [];
+  const faqs = state.config?.faqs || [];
+
+  return `
+    ${renderHeader()}
+    <main>
+      <section class="hero">
+        <div class="container hero-grid">
+          <div>
+            <p class="eyebrow">${t('heroEyebrow')}</p>
+            <h1>${t('heroTitle')}</h1>
+            <p class="lead">${t('heroText')}</p>
+            <div class="cta-row">
+              <button class="primary-btn large" data-route="#signup">${t('tryNow')}</button>
+              <button class="secondary-btn large" data-route="#demo">${t('discover')}</button>
+            </div>
+            <div class="hero-metrics">
+              <div><strong>3.8x</strong><span>${t('metricsLeads')}</span></div>
+              <div><strong>42%</strong><span>${t('metricsSaved')}</span></div>
+              <div><strong>99.2%</strong><span>${t('metricsApproval')}</span></div>
+            </div>
+          </div>
+          <div class="hero-panel">
+            <div class="mini-card">
+              <span class="muted">Workflow</span>
+              <h3>Lead → qualify → quote → approval</h3>
+              <div class="status-pill">Operación segura</div>
+            </div>
+            <div class="mini-stack">
+              <div class="mini-box"><span class="mini-label">Año actual</span><b>+27% flujo</b></div>
+              <div class="mini-box"><span class="mini-label">Coste IA</span><b>$42 / mes</b></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="features">
+        <div class="container">
+          <h2>${t('featuresTitle')}</h2>
+          <div class="cards-row">
+            <article class="feature-card"><span class="icon">01</span><h3>${t('feature1Title')}</h3><p>${t('feature1Text')}</p></article>
+            <article class="feature-card"><span class="icon">02</span><h3>${t('feature2Title')}</h3><p>${t('feature2Text')}</p></article>
+            <article class="feature-card"><span class="icon">03</span><h3>${t('feature3Title')}</h3><p>${t('feature3Text')}</p></article>
+            <article class="feature-card"><span class="icon">04</span><h3>${t('feature4Title')}</h3><p>${t('feature4Text')}</p></article>
+          </div>
+        </div>
+      </section>
+
+      <section class="showcase" id="demo">
+        <div class="container showcase-grid">
+          <div>
+            <p class="eyebrow">Product tour</p>
+            <h2>El recorrido completo de la operación</h2>
+            <ul class="checklist">
+              <li>Landing → registro → configuración del negocio</li>
+              <li>Diagnóstico → selección de procesos</li>
+              <li>Oferta personalizada → prueba 15 días</li>
+              <li>Panel del cliente y administración interna</li>
+            </ul>
+          </div>
+          <div class="terminal">
+            <div class="terminal-header"><span></span><span></span><span></span></div>
+            <pre>lead.created
+  → qualify.lead
+  → build.quote
+  → human.approval
+  → workflow.complete</pre>
+          </div>
+        </div>
+      </section>
+
+      <section class="pricing" id="pricing">
+        <div class="container">
+          <h2>${t('pricingTitle')}</h2>
+          <p class="section-copy">${t('pricingSubtitle')}</p>
+          <div class="pricing-grid">
+            ${plans.map((plan) => `
+              <article class="price-card">
+                <p class="plan-name">${plan.name}</p>
+                <h3>$${plan.price}<span>/mes</span></h3>
+                <p>${plan.description}</p>
+                <button class="secondary-btn full" data-route="#signup">Elegir</button>
+              </article>
+            `).join('')}
+          </div>
+        </div>
+      </section>
+
+      <section class="faq" id="faq">
+        <div class="container">
+          <h2>${t('faqTitle')}</h2>
+          <div class="faq-list">
+            ${faqs.map((item) => `
+              <div class="faq-item">
+                <h4>${item.question}</h4>
+                <p>${item.answer}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </section>
+
+      <section class="contact" id="contact">
+        <div class="container contact-grid">
+          <div>
+            <p class="eyebrow">Contacto</p>
+            <h2>${t('contactTitle')}</h2>
+            <p>support@adpulse.io</p>
+          </div>
+          <form id="contactForm" class="card-form">
+            <input type="text" placeholder="Nombre" required />
+            <input type="email" placeholder="Email" required />
+            <textarea rows="4" placeholder="Cuéntanos tu caso"></textarea>
+            <button class="primary-btn">Enviar</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  `;
+}
+
+function renderAuthShell() {
+  return `
+    ${renderHeader()}
+    <main class="auth-shell container">
+      <section class="auth-panel">
+        <div class="auth-card">
+          <h2>${t('registerTitle')}</h2>
+          <form id="registerForm">
+            <input type="text" name="fullName" placeholder="Nombre completo" required />
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Contraseña" required />
+            <input type="text" name="businessName" placeholder="Nombre de la empresa" />
+            <input type="text" name="industry" placeholder="Industria" />
+            <button type="submit" class="primary-btn full">${t('registerTitle')}</button>
+          </form>
+        </div>
+        <div class="auth-card">
+          <h2>${t('signInTitle')}</h2>
+          <form id="loginForm">
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Contraseña" required />
+            <button type="submit" class="secondary-btn full">${t('signInTitle')}</button>
+          </form>
+        </div>
+      </section>
+    </main>
+  `;
+}
+
+function renderDashboard() {
+  const tenant = state.dashboard?.tenant || state.tenants[0];
+  const workflowList = state.dashboard?.workflows || [];
+  const metrics = state.dashboard?.metrics || {};
+
+  return `
+    ${renderHeader()}
+    <main class="app-shell container">
+      <section class="welcome-row">
+        <div>
+          <p class="eyebrow">${t('dashboardTitle')}</p>
+          <h2>${t('welcomeBack')}, ${state.user?.fullName || 'Usuario'}</h2>
+        </div>
+        <div class="tenant-select-wrap">
+          <label>Empresa</label>
+          <select id="tenantSwitcher">
+            ${(state.tenants || []).map((item) => `
+              <option value="${item.id}" ${tenant?.id === item.id ? 'selected' : ''}>${item.name}</option>
+            `).join('') || `<option value="">${t('tenantEmpty')}</option>`}
+          </select>
+        </div>
+      </section>
+
+      <section class="metric-grid">
+        <article class="metric-card"><span>Workflows</span><strong>${metrics.workflows || 0}</strong></article>
+        <article class="metric-card"><span>Automatizaciones</span><strong>${metrics.activeAutomations || 0}</strong></article>
+        <article class="metric-card"><span>Leads</span><strong>${metrics.leads || 0}</strong></article>
+        <article class="metric-card"><span>Coste IA</span><strong>$${metrics.aiCost || 0}</strong></article>
+      </section>
+
+      <section class="two-column">
+        <div class="panel-card">
+          <h3>${t('businessSetup')}</h3>
+          <form id="workflowForm">
+            <input type="hidden" name="tenantId" value="${tenant?.id || ''}" />
+            <input type="text" name="name" placeholder="Nombre del workflow" required />
+            <input type="text" name="trigger" placeholder="trigger: lead.created" />
+            <button type="submit" class="primary-btn">Guardar workflow</button>
+          </form>
+        </div>
+        <div class="panel-card">
+          <h3>${t('startTrial')}</h3>
+          <p>${tenant ? tenant.name : t('noCompany')}</p>
+          <button id="trialAcceptBtn" class="primary-btn">${t('acceptTrial')}</button>
+        </div>
+      </section>
+
+      <section class="panel-card">
+        <h3>Estado actual</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Workflow</th><th>Trigger</th><th>Estado</th></tr></thead>
+            <tbody>
+              ${workflowList.map((item) => `
+                <tr><td>${item.name}</td><td>${item.trigger}</td><td><span class="status-pill">${item.status}</span></td></tr>
+              `).join('') || '<tr><td colspan="3">No hay workflows todavía.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  `;
+}
+
+function renderAdmin() {
+  const stats = state.adminStats?.stats || {};
+  const activity = state.adminStats?.activity || [];
+
+  return `
+    ${renderHeader()}
+    <main class="app-shell container">
+      <section>
+        <p class="eyebrow">${t('adminTitle')}</p>
+        <h2>Operación global</h2>
+      </section>
+      <section class="metric-grid">
+        <article class="metric-card"><span>Empresas</span><strong>${stats.totalTenants || 0}</strong></article>
+        <article class="metric-card"><span>Trials</span><strong>${stats.activeTrials || 0}</strong></article>
+        <article class="metric-card"><span>Workflows</span><strong>${stats.workflowCount || 0}</strong></article>
+        <article class="metric-card"><span>Uptime</span><strong>${stats.uptime || '99.8%'}</strong></article>
+      </section>
+      <section class="panel-card">
+        <h3>Actividad reciente</h3>
+        <ul class="audit-list">
+          ${activity.map((item) => `
+            <li><strong>${item.event}</strong> · ${new Date(item.createdAt).toLocaleString()}</li>
+          `).join('') || '<li>No hay actividad registrada.</li>'}
+        </ul>
+      </section>
+    </main>
+  `;
+}
+
+function renderLegal(type) {
+  const privacy = type === 'privacy';
+  return `
+    ${renderHeader()}
+    <main class="container legal-page">
+      <h1>${privacy ? t('privacyTitle') : t('termsTitle')}</h1>
+      <p>${privacy ? 'ADPULSE recoge únicamente los datos necesarios para operar, facturar, apoyar y proteger el servicio.' : 'Estas condiciones describen el uso del software y la relación comercial con ADPULSE.'}</p>
+      <ol>
+        <li>Se utilizan datos mínimos necesarios.</li>
+        <li>La prueba exige aceptación expresa de precio y condiciones.</li>
+        <li>Los clientes mantienen la propiedad de sus datos exportables.</li>
+        <li>El acceso administrativo se limita a roles internos autorizados.</li>
+      </ol>
+    </main>
+  `;
+}
+
+function renderView() {
+  const hash = window.location.hash || '#';
+  if (hash === '#signin' || hash === '#signup') return renderAuthShell();
+  if (hash === '#dashboard' && state.user) return renderDashboard();
+  if (hash === '#admin' && state.user) return renderAdmin();
+  if (hash === '#privacy') return renderLegal('privacy');
+  if (hash === '#terms') return renderLegal('terms');
+  if (state.user) return renderDashboard();
+  return renderLanding();
+}
+
+async function handleRegister(event) {
+  event.preventDefault();
+  const payload = Object.fromEntries(new FormData(event.target).entries());
+  try {
+    const result = await api('/api/register', { method: 'POST', body: JSON.stringify(payload) });
+    state.token = result.token;
+    localStorage.setItem('adpulse-token', result.token);
+    state.user = result.user;
+    state.tenants = [{ id: result.tenant.id, name: result.tenant.name }];
+    state.dashboard = { tenant: result.tenant, workflows: [], metrics: { workflows: 0, activeAutomations: 0, leads: 0, conversion: 0, monthlySpend: 0, aiCost: 0 } };
+    window.location.hash = '#dashboard';
+    render();
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+async function handleLogin(event) {
+  event.preventDefault();
+  const payload = Object.fromEntries(new FormData(event.target).entries());
+  try {
+    const result = await api('/api/login', { method: 'POST', body: JSON.stringify(payload) });
+    state.token = result.token;
+    localStorage.setItem('adpulse-token', result.token);
+    await refreshSession();
+    window.location.hash = '#dashboard';
+    render();
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+async function handleCreateWorkflow(event) {
+  event.preventDefault();
+  const payload = Object.fromEntries(new FormData(event.target).entries());
+  try {
+    await api('/api/workflows', { method: 'POST', body: JSON.stringify(payload) });
+    await refreshSession();
+    render();
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+async function handleTrialAccept() {
+  try {
+    const tenantId = state.tenants[0]?.id;
+    if (!tenantId) throw new Error('No hay empresa activa.');
+    await api('/api/trial/accept', { method: 'POST', body: JSON.stringify({ tenantId, plan: 'growth' }) });
+    await refreshSession();
+    render();
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+async function handleContact(event) {
+  event.preventDefault();
+  alert('Gracias. Un equipo de ADPULSE se pondrá en contacto contigo.');
+  event.target.reset();
+}
+
+async function handleLangChange(event) {
+  state.language = event.target.value;
+  localStorage.setItem('adpulse-lang', state.language);
+  render();
+}
+
+async function handleTenantSwitch(event) {
+  const tenantId = event.target.value;
+  if (!tenantId) return;
+  try {
+    state.dashboard = await api(`/api/dashboard?tenantId=${tenantId}`);
+    render();
+  } catch (error) {
+    alert(error.message);
+  }
+}
+
+document.addEventListener('click', async (event) => {
+  const routeTarget = event.target.closest('[data-route]');
+  if (routeTarget) {
+    const route = routeTarget.getAttribute('data-route');
+    if (route === '#dashboard' && !state.user) {
+      window.location.hash = '#signin';
+      return;
+    }
+    window.location.hash = route;
+    render();
+  }
+
+  if (event.target.id === 'logoutBtn') {
+    state.token = '';
+    localStorage.removeItem('adpulse-token');
+    window.location.hash = '#';
+    render();
+  }
+});
+
+document.addEventListener('submit', async (event) => {
+  if (event.target.id === 'registerForm') {
+    await handleRegister(event); return;
+  }
+  if (event.target.id === 'loginForm') {
+    await handleLogin(event); return;
+  }
+  if (event.target.id === 'workflowForm') {
+    await handleCreateWorkflow(event); return;
+  }
+  if (event.target.id === 'contactForm') {
+    await handleContact(event);
+  }
+});
+
+document.addEventListener('change', async (event) => {
+  if (event.target.id === 'langSelector') await handleLangChange(event);
+  if (event.target.id === 'tenantSwitcher') await handleTenantSwitch(event);
+});
+
+document.addEventListener('click', async (event) => {
+  if (event.target.id === 'trialAcceptBtn') await handleTrialAccept();
+});
+
+async function render() {
+  await loadConfig();
+  await refreshSession();
+  if (state.user) await loadAdminStats();
+  appRoot.innerHTML = renderView();
+}
+
+window.addEventListener('hashchange', render);
+render();
