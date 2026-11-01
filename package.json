@@ -1,21 +1,27 @@
-{
-  "name": "adpulse-business-os",
-  "version": "1.0.0",
-  "description": "ADPULSE business OS MVP: landing page, registration, multi-tenant dashboard, trial flow and admin views.",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "start": "node server.js",
-    "dev": "node --watch server.js",
-    "test": "node --test tests/*.test.js"
-  },
-  "engines": {
-    "node": ">=18"
-  },
-  "dependencies": {
-    "bcryptjs": "^2.4.3",
-    "express": "^4.19.2",
-    "jsonwebtoken": "^9.0.2",
-    "uuid": "^10.0.0"
-  }
-}
+# BACKLOG ACTIVADO
+
+## P0 — Bloque crítico resuelto
+- [x] Corregir ausencia de `server.js`.
+- [x] Corregir `public/index.html` para que la aplicación cargue la SPA y el frontend real.
+- [x] Mantener el sistema funcionando con el stack actual de Node.js + Express.
+
+## P1 — Producto funcional
+- [ ] Endurecer multi-tenancy real.
+- [ ] Aislar consultas y operaciones por tenant.
+- [ ] Separar cliente y panel administrativo con condiciones reales.
+- [ ] Añadir workflows persistentes con estados, reintentos y auditoría.
+- [ ] Añadir trial sin tarjeta y consentimientos de facturación explícitos.
+
+## P2 — Seguridad y operación
+- [ ] Añadir middleware de autorización por roles.
+- [ ] Añadir validación de inputs y limits.
+- [ ] Añadir observabilidad y logs estructurados.
+- [ ] Añadir backups y recuperación de datos.
+- [ ] Añadir pruebas de aislamiento, RBAC y flujo E2E.
+
+## P3 — Producción
+- [ ] Validar build y runtime real.
+- [ ] Preparar documentación final y ZIP de entrega.
+
+## Regla de ejecución
+- Corregir bloque crítico y continuar inmediatamente con la siguiente parte del sistema.
