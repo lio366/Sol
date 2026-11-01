@@ -1,593 +1,623 @@
-const translations = {
-  es: {
-    brand: 'ADPULSE',
-    navPricing: 'Precios',
-    navFaq: 'FAQ',
-    navSupport: 'Soporte',
-    navLogin: 'Entrar',
-    navStart: 'Comenzar prueba',
-    heroEyebrow: 'AUTOMÁTICA BUSINESS OS',
-    heroTitle: 'Automatiza tu empresa con IA guiada, segura y medible.',
-    heroText: 'Conectamos procesos, permisos, herramientas y agentes para que las empresas operen más rápido sin perder control.',
-    tryNow: 'Probar 15 días',
-    discover: 'Ver demo',
-    metricsLeads: 'Leads gestionados',
-    metricsSaved: 'Tiempo ahorrado',
-    metricsApproval: 'Aprobaciones humanas',
-    featuresTitle: 'Diseñado para ejecutar con control',
-    feature1Title: 'Diagnóstico del negocio',
-    feature1Text: 'Mapeamos procesos y sugerimos automatizaciones con impacto real.',
-    feature2Title: 'Permisos y aprobación',
-    feature2Text: 'Cada acción pasa por gobernanza, riesgo y validación humana según corresponda.',
-    feature3Title: 'Facturación transparente',
-    feature3Text: 'Suscripción, consumo, costes de IA y servicios diferenciados sin sorpresas.',
-    feature4Title: 'Panel multi-tenant',
-    feature4Text: 'Cada empresa opera en su propio contexto, con aislamiento y trazabilidad.',
-    pricingTitle: 'Planes para crecer sin perder margen',
-    pricingSubtitle: 'Empieza con un piloto y escala con trazabilidad y consumo visible.',
-    faqTitle: 'Preguntas frecuentes',
-    contactTitle: 'Hablemos de tu operación',
-    registerTitle: 'Crear cuenta',
-    signInTitle: 'Iniciar sesión',
-    dashboardTitle: 'Panel de negocio',
-    adminTitle: 'Administración interna',
-    businessSetup: 'Configuración del negocio',
-    startTrial: 'Activar prueba',
-    acceptTrial: 'Aceptar prueba',
-    language: 'Idioma',
-    legalTitle: 'Legal',
-    privacyTitle: 'Privacidad',
-    termsTitle: 'Términos',
-    welcomeBack: 'Bienvenido de nuevo',
-    tenantEmpty: 'Todavía no has creado empresas.',
-    noCompany: 'Sin empresa activa.',
-    trialActive: 'Prueba activa',
-    success: 'Éxito',
-    error: 'Error'
-  },
-  en: {
-    brand: 'ADPULSE',
-    navPricing: 'Pricing',
-    navFaq: 'FAQ',
-    navSupport: 'Support',
-    navLogin: 'Log in',
-    navStart: 'Start trial',
-    heroEyebrow: 'AUTOMÁTICA BUSINESS OS',
-    heroTitle: 'Automate your company with guided, secure and measurable AI.',
-    heroText: 'We connect processes, permissions and tools so your organization moves faster without losing control.',
-    tryNow: 'Try 15 days',
-    discover: 'See demo',
-    metricsLeads: 'Leads managed',
-    metricsSaved: 'Time saved',
-    metricsApproval: 'Human approvals',
-    featuresTitle: 'Built to execute with control',
-    feature1Title: 'Business diagnosis',
-    feature1Text: 'We map operations and recommend automations with measurable value.',
-    feature2Title: 'Permissions and approval',
-    feature2Text: 'Each action follows governance, risk and human validation as required.',
-    feature3Title: 'Transparent billing',
-    feature3Text: 'Subscription, AI consumption and services shown separately with no hidden costs.',
-    feature4Title: 'Multi-tenant control',
-    feature4Text: 'Each company works in its own isolated context with auditability and governance.',
-    pricingTitle: 'Plans built for growth without margin erosion',
-    pricingSubtitle: 'Start with a pilot and scale with visibility, guardrails and usage control.',
-    faqTitle: 'Frequently asked questions',
-    contactTitle: 'Let’s talk about your operation',
-    registerTitle: 'Create account',
-    signInTitle: 'Sign in',
-    dashboardTitle: 'Business dashboard',
-    adminTitle: 'Internal administration',
-    businessSetup: 'Business setup',
-    startTrial: 'Activate trial',
-    acceptTrial: 'Accept trial',
-    language: 'Language',
-    legalTitle: 'Legal',
-    privacyTitle: 'Privacy',
-    termsTitle: 'Terms',
-    welcomeBack: 'Welcome back',
-    tenantEmpty: 'You have not created any businesses yet.',
-    noCompany: 'No active company selected.',
-    trialActive: 'Trial active',
-    success: 'Success',
-    error: 'Error'
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: #071d30;
+  color: #e5eef7;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+img {
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.page-shell {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #071d30 0%, #0d2943 30%, #f4f8fc 30%, #f4f8fc 100%);
+}
+
+.container {
+  width: min(1160px, calc(100% - 2rem));
+  margin: 0 auto;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(12px);
+  background: rgba(7, 29, 48, 0.8);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 80px;
+  gap: 1rem;
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: white;
+}
+
+.brand-wrap strong {
+  display: block;
+  font-size: 1.1rem;
+}
+
+.brand-wrap small {
+  display: block;
+  color: #a4bbcf;
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #7ee7d5, #1ca7d4);
+  color: #071d30;
+  font-weight: 800;
+}
+
+.nav {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.nav a {
+  color: #dfeaf5;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.language-picker {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #dfeaf5;
+  font-size: 0.85rem;
+}
+
+.language-picker select {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 999px;
+  color: white;
+  padding: 0.5rem 0.75rem;
+}
+
+.btn {
+  border: none;
+  border-radius: 999px;
+  padding: 0.85rem 1.3rem;
+  font-weight: 600;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #7ee7d5, #3ea9d8);
+  color: #071d30;
+}
+
+.btn-ghost {
+  background: rgba(255,255,255,0.06);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.15);
+}
+
+.hero {
+  padding: 4rem 0 2rem;
+  color: white;
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 2rem;
+  align-items: center;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.14rem;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: #7ee7d5;
+}
+
+.hero-copy h1 {
+  font-size: clamp(2.5rem, 4vw, 4.5rem);
+  line-height: 1.08;
+  margin: 0.4rem 0 1rem;
+  max-width: 620px;
+}
+
+.lead {
+  font-size: 1.08rem;
+  line-height: 1.7;
+  color: #dbeaf5;
+  max-width: 620px;
+}
+
+.cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.6rem;
+  margin-top: 2.5rem;
+}
+
+.metrics > div {
+  min-width: 130px;
+}
+
+.metrics strong {
+  display: block;
+  font-size: 1.5rem;
+  color: white;
+}
+
+.metrics span {
+  color: #b7cfe0;
+  font-size: 0.9rem;
+}
+
+.hero-panel {
+  display: flex;
+  justify-content: center;
+}
+
+.panel-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: 0 22px 70px rgba(6, 17, 28, 0.35);
+  width: min(100%, 420px);
+}
+
+.status-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #7ee7d5;
+  font-size: 0.82rem;
+}
+
+.status-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #7ee7d5;
+  box-shadow: 0 0 18px rgba(126, 231, 213, 0.8);
+}
+
+.panel-card h3 {
+  color: white;
+  margin: 1rem 0 1rem;
+  font-size: 1.5rem;
+}
+
+.panel-card ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #dbeaf5;
+  line-height: 1.8;
+}
+
+.mini-chart {
+  display: flex;
+  align-items: end;
+  gap: 0.6rem;
+  height: 110px;
+  margin-top: 1.5rem;
+}
+
+.mini-chart span {
+  display: block;
+  width: 20%;
+  border-radius: 999px 999px 0 0;
+  background: linear-gradient(180deg, #7ee7d5, #1ca7d4);
+}
+
+.section {
+  padding: 5rem 0;
+  background: #f4f8fc;
+  color: #10263e;
+}
+
+.section-alt {
+  background: linear-gradient(180deg, #eef5fa 0%, #edf4fb 100%);
+}
+
+.section-heading {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.section-heading h2 {
+  margin: 0.4rem 0;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: #10263e;
+}
+
+.section-heading p:last-child {
+  color: #4f677d;
+}
+
+.feature-grid,
+.pricing-grid,
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.feature-card,
+.price-card,
+.metric-card,
+.form-card,
+.panel-card {
+  background: white;
+  border: 1px solid rgba(16, 38, 62, 0.08);
+  border-radius: 20px;
+  box-shadow: 0 18px 36px rgba(16, 38, 62, 0.05);
+}
+
+.feature-card {
+  padding: 1.5rem;
+}
+
+.icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background: rgba(30, 160, 210, 0.08);
+  color: #0d2943;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.feature-card h3 {
+  margin: 0 0 0.6rem;
+}
+
+.feature-card p {
+  margin: 0;
+  color: #51677e;
+  line-height: 1.7;
+}
+
+.pricing-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.price-card {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.price-card.featured {
+  border-color: rgba(30, 160, 210, 0.25);
+  box-shadow: 0 22px 36px rgba(30, 160, 210, 0.08);
+}
+
+.price-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  background: rgba(30, 160, 210, 0.1);
+  color: #0f4470;
+  border-radius: 999px;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.price-card h3 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.price-card p {
+  margin: 0;
+  color: #51677e;
+  line-height: 1.7;
+}
+
+.narrow {
+  max-width: 900px;
+}
+
+.faq-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.faq-item {
+  background: white;
+  border: 1px solid rgba(16, 38, 62, 0.08);
+  border-radius: 16px;
+  padding: 1rem 1.2rem;
+}
+
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 600;
+  list-style: none;
+}
+
+.faq-item p {
+  margin: 0.8rem 0 0;
+  color: #51677e;
+  line-height: 1.7;
+}
+
+.contact-grid,
+.auth-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.contact-list {
+  margin: 1.5rem 0 0;
+  padding-left: 1.2rem;
+  line-height: 2;
+  color: #425772;
+}
+
+.form-card {
+  padding: 1.5rem;
+}
+
+.form-card label {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.form-card span {
+  display: block;
+  margin-bottom: 0.45rem;
+  color: #334d67;
+  font-weight: 600;
+}
+
+.form-card input,
+.form-card textarea,
+.inline-form input {
+  width: 100%;
+  border: 1px solid rgba(16, 38, 62, 0.15);
+  border-radius: 12px;
+  padding: 0.85rem 0.9rem;
+  background: #f8fbff;
+  color: #10263e;
+}
+
+.form-card textarea {
+  resize: vertical;
+} 
+
+.hidden {
+  display: none !important;
+}
+
+.auth-section {
+  background: #eaf4ff;
+}
+
+.panel-header,
+.tenant-toolbar,
+.inline-form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tenant-toolbar {
+  margin: 1.2rem 0 1.5rem;
+}
+
+.inline-form {
+  flex: 1 1 320px;
+  justify-content: flex-end;
+}
+
+.metrics-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.metric-card {
+  padding: 1.1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metric-card span {
+  color: #51677e;
+  font-size: 0.86rem;
+}
+
+.metric-card strong {
+  font-size: 2rem;
+}
+
+.dashboard-columns {
+  display: grid;
+  grid-template-columns: 1.3fr 0.7fr;
+  gap: 1.2rem;
+  margin-top: 1.25rem;
+}
+
+.list,
+.activity-list {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 1rem;
+}
+
+.list li,
+.activity-item {
+  list-style: none;
+  background: #f8fbff;
+  border: 1px solid rgba(16, 38, 62, 0.08);
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.list strong,
+.activity-item strong {
+  display: block;
+}
+
+.list small,
+.activity-item small {
+  color: #51677e;
+}
+
+.list span {
+  color: #0d2943;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06rem;
+}
+
+.message {
+  margin-top: 1rem;
+  padding: 0.8rem 1rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  display: none;
+}
+
+.message.success {
+  display: block;
+  background: rgba(77, 188, 136, 0.12);
+  color: #0f5b3f;
+}
+
+.message.error {
+  display: block;
+  background: rgba(224, 89, 89, 0.12);
+  color: #8f2430;
+}
+
+.site-footer {
+  background: #071d30;
+  color: white;
+  padding: 2rem 0;
+}
+
+.footer-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1rem;
+}
+
+.footer-links a {
+  color: #dbeaf5;
+  text-decoration: none;
+}
+
+@media (max-width: 900px) {
+  .hero-grid,
+  .contact-grid,
+  .auth-grid,
+  .dashboard-columns,
+  .feature-grid,
+  .pricing-grid,
+  .metrics-grid {
+    grid-template-columns: 1fr 1fr;
   }
-};
 
-const state = {
-  language: localStorage.getItem('adpulse-lang') || 'es',
-  token: localStorage.getItem('adpulse-token') || '',
-  user: null,
-  tenants: [],
-  dashboard: null,
-  adminStats: null,
-  config: null
-};
-
-const appRoot = document.getElementById('app');
-
-function t(key) {
-  return translations[state.language]?.[key] || translations.es[key] || key;
-}
-
-async function api(path, options = {}) {
-  const headers = { ...(options.headers || {}) };
-  if (!(options.body instanceof FormData)) {
-    headers['Content-Type'] = headers['Content-Type'] || 'application/json';
-  }
-  if (state.token) headers.Authorization = `Bearer ${state.token}`;
-
-  const response = await fetch(path, { ...options, headers });
-  const contentType = response.headers.get('content-type') || '';
-  const payload = contentType.includes('application/json') ? await response.json() : await response.text();
-  if (!response.ok) {
-    throw new Error(typeof payload === 'string' ? payload : payload.message || 'Request failed');
-  }
-  return payload;
-}
-
-async function loadConfig() {
-  state.config = await api('/api/config');
-}
-
-async function refreshSession() {
-  if (!state.token) {
-    state.user = null;
-    state.tenants = [];
-    state.dashboard = null;
-    return;
-  }
-
-  try {
-    const data = await api('/api/me');
-    state.user = data.user;
-    state.tenants = data.tenants || [];
-    if (state.tenants.length) {
-      state.dashboard = await api(`/api/dashboard?tenantId=${state.tenants[0].id}`);
-    }
-  } catch {
-    state.token = '';
-    localStorage.removeItem('adpulse-token');
-    state.user = null;
-    state.tenants = [];
-    state.dashboard = null;
+  .nav {
+    display: none;
   }
 }
 
-async function loadAdminStats() {
-  try {
-    state.adminStats = await api('/api/admin/stats');
-  } catch {
-    state.adminStats = null;
+@media (max-width: 640px) {
+  .hero-grid,
+  .contact-grid,
+  .auth-grid,
+  .dashboard-columns,
+  .feature-grid,
+  .pricing-grid,
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .navbar,
+  .nav-actions,
+  .tenant-toolbar,
+  .inline-form,
+  .footer-wrap {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .btn {
+    width: 100%;
   }
 }
 
-function renderHeader() {
-  return `
-    <header class="topbar">
-      <div class="container nav-shell">
-        <div class="brand-group">
-          <div class="brand-mark">A</div>
-          <span>${t('brand')}</span>
-        </div>
-        <nav class="nav">
-          <a href="#pricing">${t('navPricing')}</a>
-          <a href="#faq">${t('navFaq')}</a>
-          <a href="#contact">${t('navSupport')}</a>
-          ${state.user ? '<a href="#dashboard">Dashboard</a>' : `<a href="#signin">${t('navLogin')}</a>`}
-        </nav>
-        <div class="nav-actions">
-          <select id="langSelector" aria-label="${t('language')}">
-            <option value="es" ${state.language === 'es' ? 'selected' : ''}>ES</option>
-            <option value="en" ${state.language === 'en' ? 'selected' : ''}>EN</option>
-          </select>
-          <button class="primary-btn" data-route="#signup">${t('navStart')}</button>
-        </div>
-      </div>
-    </header>
-  `;
-}
-
-function renderLanding() {
-  const plans = state.config?.plans || [];
-  const faqs = state.config?.faqs || [];
-
-  return `
-    ${renderHeader()}
-    <main>
-      <section class="hero">
-        <div class="container hero-grid">
-          <div>
-            <p class="eyebrow">${t('heroEyebrow')}</p>
-            <h1>${t('heroTitle')}</h1>
-            <p class="lead">${t('heroText')}</p>
-            <div class="cta-row">
-              <button class="primary-btn large" data-route="#signup">${t('tryNow')}</button>
-              <button class="secondary-btn large" data-route="#demo">${t('discover')}</button>
-            </div>
-            <div class="hero-metrics">
-              <div><strong>3.8x</strong><span>${t('metricsLeads')}</span></div>
-              <div><strong>42%</strong><span>${t('metricsSaved')}</span></div>
-              <div><strong>99.2%</strong><span>${t('metricsApproval')}</span></div>
-            </div>
-          </div>
-          <div class="hero-panel">
-            <div class="mini-card">
-              <span class="muted">Workflow</span>
-              <h3>Lead → qualify → quote → approval</h3>
-              <div class="status-pill">Operación segura</div>
-            </div>
-            <div class="mini-stack">
-              <div class="mini-box"><span class="mini-label">Año actual</span><b>+27% flujo</b></div>
-              <div class="mini-box"><span class="mini-label">Coste IA</span><b>$42 / mes</b></div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="features">
-        <div class="container">
-          <h2>${t('featuresTitle')}</h2>
-          <div class="cards-row">
-            <article class="feature-card"><span class="icon">01</span><h3>${t('feature1Title')}</h3><p>${t('feature1Text')}</p></article>
-            <article class="feature-card"><span class="icon">02</span><h3>${t('feature2Title')}</h3><p>${t('feature2Text')}</p></article>
-            <article class="feature-card"><span class="icon">03</span><h3>${t('feature3Title')}</h3><p>${t('feature3Text')}</p></article>
-            <article class="feature-card"><span class="icon">04</span><h3>${t('feature4Title')}</h3><p>${t('feature4Text')}</p></article>
-          </div>
-        </div>
-      </section>
-
-      <section class="showcase" id="demo">
-        <div class="container showcase-grid">
-          <div>
-            <p class="eyebrow">Product tour</p>
-            <h2>El recorrido completo de la operación</h2>
-            <ul class="checklist">
-              <li>Landing → registro → configuración del negocio</li>
-              <li>Diagnóstico → selección de procesos</li>
-              <li>Oferta personalizada → prueba 15 días</li>
-              <li>Panel del cliente y administración interna</li>
-            </ul>
-          </div>
-          <div class="terminal">
-            <div class="terminal-header"><span></span><span></span><span></span></div>
-            <pre>lead.created
-  → qualify.lead
-  → build.quote
-  → human.approval
-  → workflow.complete</pre>
-          </div>
-        </div>
-      </section>
-
-      <section class="pricing" id="pricing">
-        <div class="container">
-          <h2>${t('pricingTitle')}</h2>
-          <p class="section-copy">${t('pricingSubtitle')}</p>
-          <div class="pricing-grid">
-            ${plans.map((plan) => `
-              <article class="price-card">
-                <p class="plan-name">${plan.name}</p>
-                <h3>$${plan.price}<span>/mes</span></h3>
-                <p>${plan.description}</p>
-                <button class="secondary-btn full" data-route="#signup">Elegir</button>
-              </article>
-            `).join('')}
-          </div>
-        </div>
-      </section>
-
-      <section class="faq" id="faq">
-        <div class="container">
-          <h2>${t('faqTitle')}</h2>
-          <div class="faq-list">
-            ${faqs.map((item) => `
-              <div class="faq-item">
-                <h4>${item.question}</h4>
-                <p>${item.answer}</p>
-              </div>
-            `).join('')}
-          </div>
-        </div>
-      </section>
-
-      <section class="contact" id="contact">
-        <div class="container contact-grid">
-          <div>
-            <p class="eyebrow">Contacto</p>
-            <h2>${t('contactTitle')}</h2>
-            <p>support@adpulse.io</p>
-          </div>
-          <form id="contactForm" class="card-form">
-            <input type="text" placeholder="Nombre" required />
-            <input type="email" placeholder="Email" required />
-            <textarea rows="4" placeholder="Cuéntanos tu caso"></textarea>
-            <button class="primary-btn">Enviar</button>
-          </form>
-        </div>
-      </section>
-    </main>
-  `;
-}
-
-function renderAuthShell() {
-  return `
-    ${renderHeader()}
-    <main class="auth-shell container">
-      <section class="auth-panel">
-        <div class="auth-card">
-          <h2>${t('registerTitle')}</h2>
-          <form id="registerForm">
-            <input type="text" name="fullName" placeholder="Nombre completo" required />
-            <input type="email" name="email" placeholder="Email" required />
-            <input type="password" name="password" placeholder="Contraseña" required />
-            <input type="text" name="businessName" placeholder="Nombre de la empresa" />
-            <input type="text" name="industry" placeholder="Industria" />
-            <button type="submit" class="primary-btn full">${t('registerTitle')}</button>
-          </form>
-        </div>
-        <div class="auth-card">
-          <h2>${t('signInTitle')}</h2>
-          <form id="loginForm">
-            <input type="email" name="email" placeholder="Email" required />
-            <input type="password" name="password" placeholder="Contraseña" required />
-            <button type="submit" class="secondary-btn full">${t('signInTitle')}</button>
-          </form>
-        </div>
-      </section>
-    </main>
-  `;
-}
-
-function renderDashboard() {
-  const tenant = state.dashboard?.tenant || state.tenants[0];
-  const workflowList = state.dashboard?.workflows || [];
-  const metrics = state.dashboard?.metrics || {};
-
-  return `
-    ${renderHeader()}
-    <main class="app-shell container">
-      <section class="welcome-row">
-        <div>
-          <p class="eyebrow">${t('dashboardTitle')}</p>
-          <h2>${t('welcomeBack')}, ${state.user?.fullName || 'Usuario'}</h2>
-        </div>
-        <div class="tenant-select-wrap">
-          <label>Empresa</label>
-          <select id="tenantSwitcher">
-            ${(state.tenants || []).map((item) => `
-              <option value="${item.id}" ${tenant?.id === item.id ? 'selected' : ''}>${item.name}</option>
-            `).join('') || `<option value="">${t('tenantEmpty')}</option>`}
-          </select>
-        </div>
-      </section>
-
-      <section class="metric-grid">
-        <article class="metric-card"><span>Workflows</span><strong>${metrics.workflows || 0}</strong></article>
-        <article class="metric-card"><span>Automatizaciones</span><strong>${metrics.activeAutomations || 0}</strong></article>
-        <article class="metric-card"><span>Leads</span><strong>${metrics.leads || 0}</strong></article>
-        <article class="metric-card"><span>Coste IA</span><strong>$${metrics.aiCost || 0}</strong></article>
-      </section>
-
-      <section class="two-column">
-        <div class="panel-card">
-          <h3>${t('businessSetup')}</h3>
-          <form id="workflowForm">
-            <input type="hidden" name="tenantId" value="${tenant?.id || ''}" />
-            <input type="text" name="name" placeholder="Nombre del workflow" required />
-            <input type="text" name="trigger" placeholder="trigger: lead.created" />
-            <button type="submit" class="primary-btn">Guardar workflow</button>
-          </form>
-        </div>
-        <div class="panel-card">
-          <h3>${t('startTrial')}</h3>
-          <p>${tenant ? tenant.name : t('noCompany')}</p>
-          <button id="trialAcceptBtn" class="primary-btn">${t('acceptTrial')}</button>
-        </div>
-      </section>
-
-      <section class="panel-card">
-        <h3>Estado actual</h3>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Workflow</th><th>Trigger</th><th>Estado</th></tr></thead>
-            <tbody>
-              ${workflowList.map((item) => `
-                <tr><td>${item.name}</td><td>${item.trigger}</td><td><span class="status-pill">${item.status}</span></td></tr>
-              `).join('') || '<tr><td colspan="3">No hay workflows todavía.</td></tr>'}
-            </tbody>
-          </table>
-        </div>
-      </section>
-    </main>
-  `;
-}
-
-function renderAdmin() {
-  const stats = state.adminStats?.stats || {};
-  const activity = state.adminStats?.activity || [];
-
-  return `
-    ${renderHeader()}
-    <main class="app-shell container">
-      <section>
-        <p class="eyebrow">${t('adminTitle')}</p>
-        <h2>Operación global</h2>
-      </section>
-      <section class="metric-grid">
-        <article class="metric-card"><span>Empresas</span><strong>${stats.totalTenants || 0}</strong></article>
-        <article class="metric-card"><span>Trials</span><strong>${stats.activeTrials || 0}</strong></article>
-        <article class="metric-card"><span>Workflows</span><strong>${stats.workflowCount || 0}</strong></article>
-        <article class="metric-card"><span>Uptime</span><strong>${stats.uptime || '99.8%'}</strong></article>
-      </section>
-      <section class="panel-card">
-        <h3>Actividad reciente</h3>
-        <ul class="audit-list">
-          ${activity.map((item) => `
-            <li><strong>${item.event}</strong> · ${new Date(item.createdAt).toLocaleString()}</li>
-          `).join('') || '<li>No hay actividad registrada.</li>'}
-        </ul>
-      </section>
-    </main>
-  `;
-}
-
-function renderLegal(type) {
-  const privacy = type === 'privacy';
-  return `
-    ${renderHeader()}
-    <main class="container legal-page">
-      <h1>${privacy ? t('privacyTitle') : t('termsTitle')}</h1>
-      <p>${privacy ? 'ADPULSE recoge únicamente los datos necesarios para operar, facturar, apoyar y proteger el servicio.' : 'Estas condiciones describen el uso del software y la relación comercial con ADPULSE.'}</p>
-      <ol>
-        <li>Se utilizan datos mínimos necesarios.</li>
-        <li>La prueba exige aceptación expresa de precio y condiciones.</li>
-        <li>Los clientes mantienen la propiedad de sus datos exportables.</li>
-        <li>El acceso administrativo se limita a roles internos autorizados.</li>
-      </ol>
-    </main>
-  `;
-}
-
-function renderView() {
-  const hash = window.location.hash || '#';
-  if (hash === '#signin' || hash === '#signup') return renderAuthShell();
-  if (hash === '#dashboard' && state.user) return renderDashboard();
-  if (hash === '#admin' && state.user) return renderAdmin();
-  if (hash === '#privacy') return renderLegal('privacy');
-  if (hash === '#terms') return renderLegal('terms');
-  if (state.user) return renderDashboard();
-  return renderLanding();
-}
-
-async function handleRegister(event) {
-  event.preventDefault();
-  const payload = Object.fromEntries(new FormData(event.target).entries());
-  try {
-    const result = await api('/api/register', { method: 'POST', body: JSON.stringify(payload) });
-    state.token = result.token;
-    localStorage.setItem('adpulse-token', result.token);
-    state.user = result.user;
-    state.tenants = [{ id: result.tenant.id, name: result.tenant.name }];
-    state.dashboard = { tenant: result.tenant, workflows: [], metrics: { workflows: 0, activeAutomations: 0, leads: 0, conversion: 0, monthlySpend: 0, aiCost: 0 } };
-    window.location.hash = '#dashboard';
-    render();
-  } catch (error) {
-    alert(error.message);
-  }
-}
-
-async function handleLogin(event) {
-  event.preventDefault();
-  const payload = Object.fromEntries(new FormData(event.target).entries());
-  try {
-    const result = await api('/api/login', { method: 'POST', body: JSON.stringify(payload) });
-    state.token = result.token;
-    localStorage.setItem('adpulse-token', result.token);
-    await refreshSession();
-    window.location.hash = '#dashboard';
-    render();
-  } catch (error) {
-    alert(error.message);
-  }
-}
-
-async function handleCreateWorkflow(event) {
-  event.preventDefault();
-  const payload = Object.fromEntries(new FormData(event.target).entries());
-  try {
-    await api('/api/workflows', { method: 'POST', body: JSON.stringify(payload) });
-    await refreshSession();
-    render();
-  } catch (error) {
-    alert(error.message);
-  }
-}
-
-async function handleTrialAccept() {
-  try {
-    const tenantId = state.tenants[0]?.id;
-    if (!tenantId) throw new Error('No hay empresa activa.');
-    await api('/api/trial/accept', { method: 'POST', body: JSON.stringify({ tenantId, plan: 'growth' }) });
-    await refreshSession();
-    render();
-  } catch (error) {
-    alert(error.message);
-  }
-}
-
-async function handleContact(event) {
-  event.preventDefault();
-  alert('Gracias. Un equipo de ADPULSE se pondrá en contacto contigo.');
-  event.target.reset();
-}
-
-async function handleLangChange(event) {
-  state.language = event.target.value;
-  localStorage.setItem('adpulse-lang', state.language);
-  render();
-}
-
-async function handleTenantSwitch(event) {
-  const tenantId = event.target.value;
-  if (!tenantId) return;
-  try {
-    state.dashboard = await api(`/api/dashboard?tenantId=${tenantId}`);
-    render();
-  } catch (error) {
-    alert(error.message);
-  }
-}
-
-document.addEventListener('click', async (event) => {
-  const routeTarget = event.target.closest('[data-route]');
-  if (routeTarget) {
-    const route = routeTarget.getAttribute('data-route');
-    if (route === '#dashboard' && !state.user) {
-      window.location.hash = '#signin';
-      return;
-    }
-    window.location.hash = route;
-    render();
-  }
-
-  if (event.target.id === 'logoutBtn') {
-    state.token = '';
-    localStorage.removeItem('adpulse-token');
-    window.location.hash = '#';
-    render();
-  }
-});
-
-document.addEventListener('submit', async (event) => {
-  if (event.target.id === 'registerForm') {
-    await handleRegister(event); return;
-  }
-  if (event.target.id === 'loginForm') {
-    await handleLogin(event); return;
-  }
-  if (event.target.id === 'workflowForm') {
-    await handleCreateWorkflow(event); return;
-  }
-  if (event.target.id === 'contactForm') {
-    await handleContact(event);
-  }
-});
-
-document.addEventListener('change', async (event) => {
-  if (event.target.id === 'langSelector') await handleLangChange(event);
-  if (event.target.id === 'tenantSwitcher') await handleTenantSwitch(event);
-});
-
-document.addEventListener('click', async (event) => {
-  if (event.target.id === 'trialAcceptBtn') await handleTrialAccept();
-});
-
-async function render() {
-  await loadConfig();
-  await refreshSession();
-  if (state.user) await loadAdminStats();
-  appRoot.innerHTML = renderView();
-}
-
-window.addEventListener('hashchange', render);
-render();

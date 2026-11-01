@@ -1,47 +1,203 @@
-# ADPULSE Business OS
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { app, resetDatabase } from '../server.js';
 
-This repository was previously a documentation-only project. The first production-grade step is now an operational MVP built from scratch in the existing repository: modern landing page, registration and sign-in, tenant-based business setup, pricing/trial flow, client dashboard and internal admin panel.
+async function withServer(testFn) {
+  const server = app.listen(0);
+  await new Promise((resolve) => server.once('listening', resolve));
+  const port = server.address().port;
 
-## Stack
+  try {
+    await testFn(port);
+  } finally {
+    await new Promise((resolve, reject) => server.close((err) => (err ? reject(err) : resolve())));
+  }
+}
 
-- Node.js 18+
-- Express.js
-- JWT auth
-- JSON persistence (MVP-friendly, replaceable with DB later)
-- Vanilla HTML + CSS + JavaScript frontend
+async function request(port, path, options = {}) {
+  const response = await fetch(`http://127.0.0.1:${port}${path}`, {
+    method: options.method || 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    },
+    body: options.body ? JSON.stringify(options.body) : undefined
+  });
 
-## Features included
+  const payload = await response.json().catch(() => ({}));
+  return { status: response.status, payload };
+}
 
-- Premium landing page in Spanish and English
-- Functional language selector
-- Sign up / sign in
-- Multi-tenant company model
-- Basic RBAC and tenant isolation
-- Dashboard for business owner
-- Internal admin overview
-- Trial workflow and acceptance flow
-- Audit logging
-- Pricing and FAQ sections
-- Legal pages for privacy and terms
-- Persistence in `data/db.json`
+test.beforeEach(async () => {
+  await resetDatabase();
+});
 
-## Run locally
+test('health endpoint works', async () => {
+  await withServer(async (port) => {
+    const result = await request(port, '/api/health');
+    assert.equal(result.status, 200);
+    assert.equal(result.payload.ok, true);
+  });
+});
 
-```bash
-npm install
-npm run dev
-```
+test('registration creates user, tenant and token', async () => {
+  await withServer(async (port) => {
+    const result = await request(port, '/api/register', {
+      method: 'POST',
+      body: {
+        fullName: 'Ana García',
+        email: 'ana@company.com',
+        password: 'secret123',
+        businessName: 'Alfa Labs',
+        industry: 'software'
+      }
+    });
 
-Then visit:
+    assert.equal(result.status, 201);
+    assert.ok(result.payload.token);
+    assert.equal(result.payload.user.email, 'ana@company.com');
+    assert.equal(result.payload.tenant.name, 'Alfa Labs');
+  });
+});
 
-- http://localhost:3000
+test('duplicate email registration is rejected', async () => {
+  await withServer(async (port) => {
+    await request(port, '/api/register', {
+      method: 'POST',
+      body: {
+        fullName: 'Ana García',
+        email: 'ana@company.com',
+        password: 'secret123'
+      }
+    });
 
-## Test
+    const result = await request(port, '/api/register', {
+      method: 'POST',
+      body: {
+        fullName: 'Ana García',
+        email: 'ana@company.com',
+        password: 'secret123'
+      }
+    });
 
-```bash
-npm test
-```
+    assert.equal(result.status, 409);
+  });
+});
 
-## Important note
+test('login returns session token and account data', async () => {
+  await withServer(async (port) => {
+    await request(port, '/api/register', {
+      method: 'POST',
+      body: {
+        fullName: 'Ana García',
+        email: 'ana@company.com',
+        password: 'secret123',
+        businessName: 'Alfa Labs'
+      }
+    });
 
-This is a real MVP foundation, not a production certification. It is designed to implement the product flow described in the ADPULSE dossier while keeping the repository honest and operational.
+    const result = await request(port, '/api/login', {
+      method: 'POST',
+      body: {
+        email: 'ana@company.com',
+        password: 'secret123'
+      }
+    });
+
+    assert.equal(result.status, 200);
+    assert.ok(result.payload.token);
+    assert.equal(result.payload.user.email, 'ana@company.com');
+  });
+});
+
+test('tenant dashboard denies access to another tenant', async () => {
+  await withServer(async (port) => {
+    const first = await request(port, '/api/register', {
+      method: 'POST',
+      body: {
+        fullName: 'Owner One',
+        email: 'one@company.com',
+        password: 'secret123',
+        businessName: 'Tenant A'
+      }
+    });
+
+    const second = await request(port, '/api/register', {
+      method: 'POST',
+      body: {
+        fullName: 'Owner Two',
+        email: 'two@company.com',
+        password: 'secret123',
+        businessName: 'Tenant B'
+      }
+    });
+
+    const tenantA = first.payload.tenant.id;
+    const tokenB = second.payload.token;
+
+    const result = await request(port, '/api/dashboard?tenantId=' + tenantA, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${tokenB}`
+      }
+    });
+
+    assert.equal(result.status, 403);
+  });
+});
+
+test('trial acceptance is recorded', async () => {
+  await withServer(async (port) => {
+    const user = await request(port, '/api/register', {
+      method: 'POST',
+      body: {
+        fullName: 'Owner',
+        email: 'owner@company.com',
+        password: 'secret123',
+        businessName: 'Trial Corp'
+      }
+    });
+
+    const token = user.payload.token;
+    const tenantId = user.payload.tenant.id;
+
+    const result = await request(port, '/api/trial/accept', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`
+      },
+      body: {
+        tenantId,
+        plan: 'growth'
+      }
+    });
+
+    assert.equal(result.status, 200);
+    assert.equal(result.payload.subscription.plan, 'growth');
+    assert.equal(result.payload.subscription.consentAccepted, true);
+  });
+});
+
+test('admin stats require admin role or owner', async () => {
+  await withServer(async (port) => {
+    const user = await request(port, '/api/register', {
+      method: 'POST',
+      body: {
+        fullName: 'Admin User',
+        email: 'admin@company.com',
+        password: 'secret123',
+        businessName: 'Admin Corp'
+      }
+    });
+
+    const result = await request(port, '/api/admin/stats', {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${user.payload.token}`
+      }
+    });
+
+    assert.equal(result.status, 200);
+    assert.ok(result.payload.stats);
+  });
+});
