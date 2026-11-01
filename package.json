@@ -1,0 +1,21 @@
+{
+  "name": "adpulse-business-os",
+  "version": "1.0.0",
+  "description": "ADPULSE business OS MVP: landing page, registration, multi-tenant dashboard, trial flow and admin views.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node --test tests/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "uuid": "^10.0.0"
+  }
+}

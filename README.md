@@ -1,55 +1,47 @@
-# 🌞 Sol - El Sistema Planetario y Sus Servicios
+# ADPULSE Business OS
 
-Una arquitectura de microsservicios inspirada en el sistema planetario, donde cada servicio orbita alrededor del núcleo (Sol), generando frutos (datos, APIs, funcionalidades) que son consumibles por otros sistemas.
+This repository was previously a documentation-only project. The first production-grade step is now an operational MVP built from scratch in the existing repository: modern landing page, registration and sign-in, tenant-based business setup, pricing/trial flow, client dashboard and internal admin panel.
 
-## 🌍 Concepto
+## Stack
 
-Sol es un conjunto integrado de servicios donde:
-- **El Sol (Núcleo)** = Core de la plataforma, autenticación, orquestación
-- **Los Planetas** = Servicios especializados (Weather, Commerce, Analytics, etc.)
-- **Los Frutos** = APIs RESTful, eventos, datos procesados - listos para consumir
-- **Las Órbitas** = Comunicación asincrónica, colas de eventos, sincronización
+- Node.js 18+
+- Express.js
+- JWT auth
+- JSON persistence (MVP-friendly, replaceable with DB later)
+- Vanilla HTML + CSS + JavaScript frontend
 
-## 🚀 Estructura del Proyecto
+## Features included
 
+- Premium landing page in Spanish and English
+- Functional language selector
+- Sign up / sign in
+- Multi-tenant company model
+- Basic RBAC and tenant isolation
+- Dashboard for business owner
+- Internal admin overview
+- Trial workflow and acceptance flow
+- Audit logging
+- Pricing and FAQ sections
+- Legal pages for privacy and terms
+- Persistence in `data/db.json`
+
+## Run locally
+
+```bash
+npm install
+npm run dev
 ```
-Sol/
-├── core/              # Núcleo del sistema (Sol)
-├── services/          # Servicios planetarios
-│   ├── weather/       # Servicio de clima
-│   ├── commerce/      # Servicio comercial
-│   ├── analytics/     # Análisis y métricas
-│   └── discovery/     # Descubrimiento de servicios
-├── shared/            # Librerías compartidas
-├── docs/              # Documentación
-└── infrastructure/    # Configuración IaC
+
+Then visit:
+
+- http://localhost:3000
+
+## Test
+
+```bash
+npm test
 ```
 
-## 🍎 Los Frutos (Servicios Disponibles)
+## Important note
 
-| Servicio | Descripción | Estado |
-|----------|-------------|--------|
-| Core API | Autenticación y orquestación | 🔨 En construcción |
-| Weather | Datos climáticos y predicciones | 📋 Planeado |
-| Commerce | Marketplace integrado | 📋 Planeado |
-| Analytics | Análisis en tiempo real | 📋 Planeado |
-
-## 🛠️ Tecnologías
-
-- **Lenguaje**: (Por determinar)
-- **API**: REST + gRPC
-- **Base de Datos**: (Por determinar)
-- **Orquestación**: (Por determinar)
-- **CI/CD**: GitHub Actions
-
-## 📦 Cómo Consumir los Frutos
-
-Los servicios exponen APIs documentadas en OpenAPI/Swagger. Cada servicio es independiente pero conectado a través de eventos.
-
-## 🤝 Contribuir
-
-Las contribuciones son bienvenidas. Revisa los issues y proyectos activos.
-
-## 📄 Licencia
-
-MIT
+This is a real MVP foundation, not a production certification. It is designed to implement the product flow described in the ADPULSE dossier while keeping the repository honest and operational.
